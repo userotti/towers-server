@@ -1,7 +1,7 @@
 package main
 
 import (
-	"image/color"
+	"towers/systems"
 
 	"engo.io/ecs"
 	"engo.io/engo"
@@ -9,12 +9,6 @@ import (
 )
 
 type myScene struct{}
-
-type City struct {
-	ecs.BasicEntity
-	common.RenderComponent
-	common.SpaceComponent
-}
 
 // Type uniquely defines your game type
 func (*myScene) Type() string { return "myGame" }
@@ -26,38 +20,20 @@ func (*myScene) Preload() {}
 // Setup is called before the main loop starts. It allows you
 // to add entities and systems to your Scene.
 func (*myScene) Setup(u engo.Updater) {
+	engo.Input.RegisterButton("AddTower", engo.KeyD)
 	world, _ := u.(*ecs.World)
 	world.AddSystem(&common.RenderSystem{})
-
-	city := City{BasicEntity: ecs.NewBasic()}
-
-	city.SpaceComponent = common.SpaceComponent{
-		Position: engo.Point{10, 10},
-		Width:    30,
-		Height:   30,
-	}
-
-	city.RenderComponent = common.RenderComponent{
-		Drawable: common.Circle{
-			BorderColor: color.White,
-			BorderWidth: 3,
-		},
-	}
-
-	for _, system := range world.Systems() {
-		switch sys := system.(type) {
-		case *common.RenderSystem:
-			sys.Add(&city.BasicEntity, &city.RenderComponent, &city.SpaceComponent)
-		}
-	}
+	world.AddSystem(&common.MouseSystem{})
+	world.AddSystem(&systems.TowerCreateSystem{})
+	world.AddSystem(&systems.LinearTweenSystem{})
 
 }
 
 func main() {
 	opts := engo.RunOptions{
-		Title:  "Hello World",
-		Width:  400,
-		Height: 400,
+		Title:  "Towers",
+		Width:  800,
+		Height: 800,
 	}
 	engo.Run(opts, &myScene{})
 }
