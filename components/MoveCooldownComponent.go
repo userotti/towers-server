@@ -6,4 +6,5 @@ type MoveCooldownComponent struct {
 	MaxCharge     float32
 	CurrentCharge float32
 	RechargeSpeed float32
+	Ready         bool
 }

@@ -8,4 +8,5 @@ type WeaponComponent struct {
 	RechargeSpeed float32
 	Damage        int32
 	Range         int32
+	Loaded        bool
 }

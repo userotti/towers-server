@@ -2,5 +2,7 @@ package components
 
 //HitpointsComponent would kill an entity
 type HitpointsComponent struct {
-	Hitpoints int64
+	MinHitpoints     int64
+	CurrentHitpoints int64
+	MaxHitpoints     int64
 }
