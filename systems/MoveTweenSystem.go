@@ -1,6 +1,7 @@
 package systems
 
 import (
+	"fmt"
 	"time"
 	"towers/components"
 
@@ -26,7 +27,10 @@ func (mts *MoveTweenSystem) New(w *ecs.World) {
 
 //Add uAdd new entity
 func (mts *MoveTweenSystem) Add(basic *ecs.BasicEntity, space *common.SpaceComponent, tween *components.MoveTweenComponent) {
-	mts.entities = append(mts.entities, MoveTweenEntity{basic, tween, space})
+	var entity = MoveTweenEntity{basic, tween, space}
+	fmt.Println("hi2")
+	entity.MoveTweenComponent.CalculatedDuration = (entity.MoveTweenComponent.Max - entity.MoveTweenComponent.Min) / entity.MoveTweenComponent.Speed
+	mts.entities = append(mts.entities, entity)
 }
 
 //Remove removes them from the system
@@ -49,18 +53,28 @@ func (mts *MoveTweenSystem) Update(dt float32) {
 	var removeList []MoveTweenEntity
 
 	for _, e := range mts.entities {
+		if !e.MoveTweenComponent.Done {
+			fmt.Println(dt)
+			fmt.Println(e.MoveTweenComponent.Current)
 
-		linearResult := linear(e.MoveTweenComponent.StartTime, e.MoveTweenComponent.EndTime, time.Now())
-		if e.MoveTweenComponent.Tweening {
+			linearResult := linear(e.MoveTweenComponent.MoveStartTime, e.MoveTweenComponent.MoveStartTime.Add(time.Duration(e.MoveTweenComponent.CalculatedDuration)*time.Second), time.Now())
+
+			e.MoveTweenComponent.Current = e.MoveTweenComponent.Current + (e.MoveTweenComponent.Speed * dt)
+
+			if linearResult == 1 {
+				// removeList = append(removeList, e) //this is where we remove the entity from this system. but I don't think that is neccesary for a perf yet
+				e.MoveTweenComponent.Current = e.MoveTweenComponent.Max
+				e.MoveTweenComponent.Done = true
+			}
+
+			if e.MoveTweenComponent.Current >= e.MoveTweenComponent.Max {
+
+			}
+
 			e.SpaceComponent.Position.X = e.MoveTweenComponent.StartPosition.X + (e.MoveTweenComponent.DestinationPosition.X-e.MoveTweenComponent.StartPosition.X)*linearResult
 			e.SpaceComponent.Position.Y = e.MoveTweenComponent.StartPosition.Y + (e.MoveTweenComponent.DestinationPosition.Y-e.MoveTweenComponent.StartPosition.Y)*linearResult
 
-			if linearResult == 1 {
-				// removeList = append(removeList, e)
-				e.MoveTweenComponent.Tweening = false
-			}
 		}
-
 	}
 
 	if len(removeList) != 0 {
@@ -69,18 +83,4 @@ func (mts *MoveTweenSystem) Update(dt float32) {
 		}
 	}
 
-	// fmt.Println(len(mts.entities))
-}
-
-// linear does a interpolation returns [0..1] floats
-func linear(t0 time.Time, t1 time.Time, t time.Time) float32 {
-	if t.After(t1) || t.Equal(t1) {
-		return 1
-	}
-
-	if t.Before(t0) || t.Equal(t0) {
-		return 0
-	}
-
-	return float32(float32(t.Sub(t0).Nanoseconds()) / float32(t1.Sub(t0).Nanoseconds()))
 }

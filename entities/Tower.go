@@ -14,7 +14,7 @@ type Tower struct {
 	common.SpaceComponent
 	components.MoveAIComponent
 	components.MoveCooldownComponent
-	components.MoveTween2Component
+	components.MoveTweenComponent
 	components.TeamComponent
 	components.WeaponComponent
 	components.ShieldComponent

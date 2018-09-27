@@ -66,7 +66,7 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			},
 		}
 
-		tower.MoveTween2Component = components.MoveTween2Component{
+		tower.MoveTweenComponent = components.MoveTweenComponent{
 			StartPosition: tower.SpaceComponent.Position,
 			MoveStartTime: time.Now(),
 			Min:           0,
@@ -88,12 +88,6 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 		// 	Charged:       false,
 		// }
 
-		// tower.MoveTweenComponent = components.MoveTweenComponent{
-		// 	StartPosition: tower.SpaceComponent.Position,
-		// 	StartTime:     time.Now(),
-		// 	EndTime:       time.Now().Add(time.Duration(2 * time.Second)),
-		// 	Tweening:      false,
-		// }
 		//
 		// fmt.Println(tower.TweenComponent.StartTime.String())
 		// fmt.Println(tower.TweenComponent.EndTime.String())
@@ -104,8 +98,8 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			switch sys := system.(type) {
 			case *common.RenderSystem:
 				sys.Add(&tower.BasicEntity, &tower.RenderComponent, &tower.SpaceComponent)
-			case *MoveTween2System:
-				sys.Add(&tower.BasicEntity, &tower.SpaceComponent, &tower.MoveTween2Component)
+			case *MoveTweenSystem:
+				sys.Add(&tower.BasicEntity, &tower.SpaceComponent, &tower.MoveTweenComponent)
 			case *TestTweenSystem:
 				sys.Add(&tower.BasicEntity, &tower.TestTweenComponent)
 			}

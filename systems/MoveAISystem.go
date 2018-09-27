@@ -55,7 +55,7 @@ func (mas *MoveAISystem) Update(dt float32) {
 			e.MoveCooldownComponent.Ready = false
 
 			if e.MoveAIComponent.Type == "RandomMover" {
-				e.MoveTweenComponent.Tweening = true
+				e.MoveTweenComponent.Done = false
 				sin, cos := math.Sincos(rand.Float64())
 				e.MoveTweenComponent.DestinationPosition = engo.Point{X: float32(float32(sin) * e.MoveTweenComponent.Range), Y: float32(float32(cos) * e.MoveTweenComponent.Range)}
 			}
