@@ -14,11 +14,12 @@ type Tower struct {
 	common.SpaceComponent
 	components.MoveAIComponent
 	components.MoveCooldownComponent
-	components.MoveTweenComponent
+	components.MoveTween2Component
 	components.TeamComponent
 	components.WeaponComponent
 	components.ShieldComponent
 	components.HitpointsComponent
+	components.TestTweenComponent
 }
 
 //Rock destructable object

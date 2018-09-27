@@ -49,7 +49,7 @@ func (*TowerCreateSystem) Remove(ecs.BasicEntity) {}
 func (tb *TowerCreateSystem) Update(dt float32) {
 	if engo.Input.Button("AddTower").JustPressed() {
 		fmt.Println("The gamer pressed d")
-		fmt.Println(dt)
+		// fmt.Println(dt)
 
 		tower := entities.Tower{BasicEntity: ecs.NewBasic()}
 
@@ -66,12 +66,34 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			},
 		}
 
-		tower.MoveTweenComponent = components.MoveTweenComponent{
+		tower.MoveTween2Component = components.MoveTween2Component{
 			StartPosition: tower.SpaceComponent.Position,
-			StartTime:     time.Now(),
-			EndTime:       time.Now().Add(time.Duration(2 * time.Second)),
-			Tweening:      false,
+			MoveStartTime: time.Now(),
+			Min:           0,
+			Max:           1,
+			Current:       0,
+			Speed:         1,
+			Done:          false,
 		}
+
+		tower.MoveAIComponent = components.MoveAIComponent{
+			Type: "RandomMover",
+		}
+
+		// tower.TestTweenComponent = components.TestTweenComponent{
+		// 	MinCharge:     0,
+		// 	MaxCharge:     2,
+		// 	CurrentCharge: 0,
+		// 	RechargeSpeed: 0.2,
+		// 	Charged:       false,
+		// }
+
+		// tower.MoveTweenComponent = components.MoveTweenComponent{
+		// 	StartPosition: tower.SpaceComponent.Position,
+		// 	StartTime:     time.Now(),
+		// 	EndTime:       time.Now().Add(time.Duration(2 * time.Second)),
+		// 	Tweening:      false,
+		// }
 		//
 		// fmt.Println(tower.TweenComponent.StartTime.String())
 		// fmt.Println(tower.TweenComponent.EndTime.String())
@@ -82,8 +104,10 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			switch sys := system.(type) {
 			case *common.RenderSystem:
 				sys.Add(&tower.BasicEntity, &tower.RenderComponent, &tower.SpaceComponent)
-			case *MoveTweenSystem:
-				sys.Add(&tower.BasicEntity, &tower.SpaceComponent, &tower.MoveTweenComponent)
+			case *MoveTween2System:
+				sys.Add(&tower.BasicEntity, &tower.SpaceComponent, &tower.MoveTween2Component)
+			case *TestTweenSystem:
+				sys.Add(&tower.BasicEntity, &tower.TestTweenComponent)
 			}
 
 		}

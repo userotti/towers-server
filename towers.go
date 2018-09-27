@@ -25,7 +25,8 @@ func (*myScene) Setup(u engo.Updater) {
 	world.AddSystem(&common.RenderSystem{})
 	world.AddSystem(&common.MouseSystem{})
 	world.AddSystem(&systems.TowerCreateSystem{})
-	world.AddSystem(&systems.MoveTweenSystem{})
+	world.AddSystem(&systems.MoveTween2System{})
+	// world.AddSystem(&systems.TestTweenSystem{})
 
 }
 
