@@ -72,7 +72,7 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			Min:           0,
 			Max:           1,
 			Current:       0,
-			Speed:         1,
+			Speed:         0.01,
 			Done:          false,
 		}
 

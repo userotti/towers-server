@@ -2,8 +2,8 @@ package utility
 
 import "time"
 
-// linear does a interpolation returns [0..1] floats
-func linear(t0 time.Time, t1 time.Time, t time.Time) float32 {
+// Linear does a interpolation returns [0..1] floats
+func Linear(t0 time.Time, t1 time.Time, t time.Time) float32 {
 	if t.After(t1) || t.Equal(t1) {
 		return 1
 	}

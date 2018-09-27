@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	"towers/components"
+	"towers/utility"
 
 	"engo.io/ecs"
 	"engo.io/engo/common"
@@ -28,7 +29,6 @@ func (mts *MoveTweenSystem) New(w *ecs.World) {
 //Add uAdd new entity
 func (mts *MoveTweenSystem) Add(basic *ecs.BasicEntity, space *common.SpaceComponent, tween *components.MoveTweenComponent) {
 	var entity = MoveTweenEntity{basic, tween, space}
-	fmt.Println("hi2")
 	entity.MoveTweenComponent.CalculatedDuration = (entity.MoveTweenComponent.Max - entity.MoveTweenComponent.Min) / entity.MoveTweenComponent.Speed
 	mts.entities = append(mts.entities, entity)
 }
@@ -57,18 +57,13 @@ func (mts *MoveTweenSystem) Update(dt float32) {
 			fmt.Println(dt)
 			fmt.Println(e.MoveTweenComponent.Current)
 
-			linearResult := linear(e.MoveTweenComponent.MoveStartTime, e.MoveTweenComponent.MoveStartTime.Add(time.Duration(e.MoveTweenComponent.CalculatedDuration)*time.Second), time.Now())
-
-			e.MoveTweenComponent.Current = e.MoveTweenComponent.Current + (e.MoveTweenComponent.Speed * dt)
+			e.MoveTweenComponent.Current = e.MoveTweenComponent.Current + (e.MoveTweenComponent.Speed * dt) // this is not neccesary at this stage,but might be valueble at a later stage.
+			linearResult := utility.Linear(e.MoveTweenComponent.MoveStartTime, e.MoveTweenComponent.MoveStartTime.Add(time.Duration(e.MoveTweenComponent.CalculatedDuration)*time.Second), time.Now())
 
 			if linearResult == 1 {
 				// removeList = append(removeList, e) //this is where we remove the entity from this system. but I don't think that is neccesary for a perf yet
 				e.MoveTweenComponent.Current = e.MoveTweenComponent.Max
 				e.MoveTweenComponent.Done = true
-			}
-
-			if e.MoveTweenComponent.Current >= e.MoveTweenComponent.Max {
-
 			}
 
 			e.SpaceComponent.Position.X = e.MoveTweenComponent.StartPosition.X + (e.MoveTweenComponent.DestinationPosition.X-e.MoveTweenComponent.StartPosition.X)*linearResult
