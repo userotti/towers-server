@@ -3,7 +3,6 @@ package systems
 import (
 	"fmt"
 	"image/color"
-	"time"
 	"towers/components"
 	"towers/entities"
 
@@ -68,12 +67,20 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 
 		tower.MoveTweenComponent = components.MoveTweenComponent{
 			StartPosition: tower.SpaceComponent.Position,
-			MoveStartTime: time.Now(),
 			Min:           0,
 			Max:           1,
 			Current:       0,
-			Speed:         0.01,
-			Done:          false,
+			Speed:         1,
+			Range:         50,
+			Done:          true,
+		}
+
+		tower.MoveCooldownComponent = components.MoveCooldownComponent{
+			MinCharge:     0,
+			MaxCharge:     2,
+			CurrentCharge: 0,
+			RechargeSpeed: 1.2,
+			Ready:         false,
 		}
 
 		tower.MoveAIComponent = components.MoveAIComponent{
@@ -100,8 +107,10 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 				sys.Add(&tower.BasicEntity, &tower.RenderComponent, &tower.SpaceComponent)
 			case *MoveTweenSystem:
 				sys.Add(&tower.BasicEntity, &tower.SpaceComponent, &tower.MoveTweenComponent)
-			case *TestTweenSystem:
-				sys.Add(&tower.BasicEntity, &tower.TestTweenComponent)
+			case *MoveCooldownSystem:
+				sys.Add(&tower.BasicEntity, &tower.MoveCooldownComponent)
+			case *MoveAISystem:
+				sys.Add(&tower.BasicEntity, &tower.MoveAIComponent, &tower.MoveCooldownComponent, &tower.MoveTweenComponent, &tower.SpaceComponent)
 			}
 
 		}

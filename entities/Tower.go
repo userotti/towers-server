@@ -19,7 +19,6 @@ type Tower struct {
 	components.WeaponComponent
 	components.ShieldComponent
 	components.HitpointsComponent
-	components.TestTweenComponent
 }
 
 //Rock destructable object

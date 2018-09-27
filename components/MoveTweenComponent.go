@@ -10,7 +10,7 @@ import (
 type MoveTweenComponent struct {
 	StartPosition       engo.Point
 	DestinationPosition engo.Point
-	MoveStartTime       time.Time
+	StartTime           time.Time
 	Range               float32
 	Min                 float32 //0 is good choice for this
 	Max                 float32 //1 is good choice for this,

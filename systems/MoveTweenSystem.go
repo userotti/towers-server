@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"time"
 	"towers/components"
 	"towers/utility"
@@ -50,32 +49,43 @@ func (mts *MoveTweenSystem) Remove(basic ecs.BasicEntity) {
 //Update updates all entities
 func (mts *MoveTweenSystem) Update(dt float32) {
 
-	var removeList []MoveTweenEntity
+	//*** Perf optimatization 1 *** Remove items from the system if its not tweening.
+	// var removeList []MoveTweenEntity
 
 	for _, e := range mts.entities {
+
+		//Don't update the duration during the tween, but make sure the next tween is with the latest states. Speed, Min and Max...
+		if e.MoveTweenComponent.Done {
+			e.MoveTweenComponent.CalculatedDuration = (e.MoveTweenComponent.Max - e.MoveTweenComponent.Min) / e.MoveTweenComponent.Speed
+		}
+
 		if !e.MoveTweenComponent.Done {
-			fmt.Println(dt)
-			fmt.Println(e.MoveTweenComponent.Current)
 
+			//Calculate the tween values
 			e.MoveTweenComponent.Current = e.MoveTweenComponent.Current + (e.MoveTweenComponent.Speed * dt) // this is not neccesary at this stage,but might be valueble at a later stage.
-			linearResult := utility.Linear(e.MoveTweenComponent.MoveStartTime, e.MoveTweenComponent.MoveStartTime.Add(time.Duration(e.MoveTweenComponent.CalculatedDuration)*time.Second), time.Now())
+			tweenFunctionResult := utility.Linear(e.MoveTweenComponent.StartTime, e.MoveTweenComponent.StartTime.Add(time.Duration(e.MoveTweenComponent.CalculatedDuration)*time.Second), time.Now())
 
-			if linearResult == 1 {
-				// removeList = append(removeList, e) //this is where we remove the entity from this system. but I don't think that is neccesary for a perf yet
+			//Stop tweening
+			if tweenFunctionResult == 1 {
+				//removeList = append(removeList, e) //*** Perf optimatization 1 ***
 				e.MoveTweenComponent.Current = e.MoveTweenComponent.Max
+				e.MoveTweenComponent.StartPosition.X = e.MoveTweenComponent.DestinationPosition.X
+				e.MoveTweenComponent.StartPosition.Y = e.MoveTweenComponent.DestinationPosition.Y
 				e.MoveTweenComponent.Done = true
 			}
 
-			e.SpaceComponent.Position.X = e.MoveTweenComponent.StartPosition.X + (e.MoveTweenComponent.DestinationPosition.X-e.MoveTweenComponent.StartPosition.X)*linearResult
-			e.SpaceComponent.Position.Y = e.MoveTweenComponent.StartPosition.Y + (e.MoveTweenComponent.DestinationPosition.Y-e.MoveTweenComponent.StartPosition.Y)*linearResult
+			//Move the the space component
+			e.SpaceComponent.Position.X = e.MoveTweenComponent.StartPosition.X + (e.MoveTweenComponent.DestinationPosition.X-e.MoveTweenComponent.StartPosition.X)*tweenFunctionResult
+			e.SpaceComponent.Position.Y = e.MoveTweenComponent.StartPosition.Y + (e.MoveTweenComponent.DestinationPosition.Y-e.MoveTweenComponent.StartPosition.Y)*tweenFunctionResult
 
 		}
 	}
 
-	if len(removeList) != 0 {
-		for _, e := range removeList {
-			mts.Remove(*e.BasicEntity)
-		}
-	}
+	////*** Perf optimatization 1 ***
+	// if len(removeList) != 0 {
+	// 	for _, e := range removeList {
+	// 		mts.Remove(*e.BasicEntity)
+	// 	}
+	// }
 
 }
