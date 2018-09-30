@@ -1,8 +1,10 @@
 package systems
 
 import (
-	"fmt"
+	"math"
+	"time"
 	"towers/components"
+	"towers/utility"
 
 	"engo.io/ecs"
 )
@@ -25,8 +27,6 @@ func (mcs *MoveCooldownSystem) New(w *ecs.World) {
 
 //Add new entity to the system
 func (mcs *MoveCooldownSystem) Add(basic *ecs.BasicEntity, move *components.MoveCooldownComponent) {
-	var entity = MoveCooldownEntity{basic, move}
-	entity.MoveCooldownComponent.CalculatedDuration = (entity.MoveCooldownComponent.MaxCharge - entity.MoveCooldownComponent.MinCharge) / entity.MoveCooldownComponent.RechargeSpeed
 	mcs.entities = append(mcs.entities, MoveCooldownEntity{basic, move})
 }
 
@@ -48,16 +48,22 @@ func (mcs *MoveCooldownSystem) Remove(basic ecs.BasicEntity) {
 func (mcs *MoveCooldownSystem) Update(dt float32) {
 
 	for _, e := range mcs.entities {
-		if !e.MoveCooldownComponent.Ready {
-			e.MoveCooldownComponent.CurrentCharge = e.MoveCooldownComponent.CurrentCharge + (e.MoveCooldownComponent.RechargeSpeed * dt)
-			fmt.Println(e.MoveCooldownComponent.CurrentCharge)
-			if e.MoveCooldownComponent.CurrentCharge >= e.MoveCooldownComponent.MaxCharge {
-				e.MoveCooldownComponent.CurrentCharge = e.MoveCooldownComponent.MaxCharge
-				e.MoveCooldownComponent.Ready = true
+		if !e.MoveCooldownComponent.Done {
+
+			//Calculate the tween values
+			e.MoveCooldownComponent.NanosecondsTotalDuration = int64((math.Pow(10, 9) * e.MoveCooldownComponent.Cooldown) / e.MoveCooldownComponent.Recharge)
+			e.MoveCooldownComponent.NanosecondsFromStart = e.MoveCooldownComponent.NanosecondsFromStart + int64(math.Pow(10, 9)*float64(dt))
+
+			var startTime = e.MoveCooldownComponent.StartTime
+			var endTime = e.MoveCooldownComponent.StartTime.Add(time.Duration(e.MoveCooldownComponent.NanosecondsTotalDuration))
+
+			//Apply the desired tween function
+			tweenFunctionResult := utility.Linear(startTime, endTime, startTime.Add(time.Duration(e.MoveCooldownComponent.NanosecondsFromStart))) //Change NanosecondsFromStart of time.Now for time travel stuff
+
+			//Stop tweening
+			if tweenFunctionResult == 1 {
+				e.MoveCooldownComponent.Done = true
 			}
-		} else {
-			//Its ready
-			e.MoveCooldownComponent.CalculatedDuration = (e.MoveCooldownComponent.MaxCharge - e.MoveCooldownComponent.MinCharge) / e.MoveCooldownComponent.RechargeSpeed
 
 		}
 	}

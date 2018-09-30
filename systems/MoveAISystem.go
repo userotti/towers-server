@@ -1,7 +1,6 @@
 package systems
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -54,30 +53,31 @@ func (mas *MoveAISystem) Remove(basic ecs.BasicEntity) {
 func (mas *MoveAISystem) Update(dt float32) {
 
 	for _, e := range mas.entities {
-		if e.MoveCooldownComponent.Ready && e.MoveTweenComponent.Done {
+		if e.MoveCooldownComponent.Done && e.MoveTweenComponent.Done {
 
 			//Now you're tweening
-			e.MoveCooldownComponent.Ready = false
+			e.MoveCooldownComponent.Done = false
 			e.MoveCooldownComponent.StartTime = time.Now()
-			e.MoveCooldownComponent.CurrentCharge = 0
+			e.MoveCooldownComponent.NanosecondsFromStart = 0
 
 			e.MoveTweenComponent.Done = false
 			e.MoveTweenComponent.StartTime = time.Now()
+			e.MoveTweenComponent.NanosecondsFromStart = 0
 
 			//But where are you tweening to? ...
 			if e.MoveAIComponent.Type == "RandomMover" {
 				sin, cos := math.Sincos((rand.Float64() * (2 * math.Pi)) - math.Pi)
 
-				var newDestination = engo.Point{X: float32(float32(sin) * e.MoveTweenComponent.Range), Y: float32(float32(cos) * e.MoveTweenComponent.Range)}
-				e.MoveTweenComponent.DestinationPosition.X = e.SpaceComponent.Position.X + newDestination.X
-				e.MoveTweenComponent.DestinationPosition.Y = e.SpaceComponent.Position.Y + newDestination.Y
+				var differenceVector = engo.Point{X: float32(sin * e.MoveTweenComponent.Range), Y: float32(cos * e.MoveTweenComponent.Range)}
+				e.MoveTweenComponent.DestinationPosition.X = e.SpaceComponent.Position.X + differenceVector.X
+				e.MoveTweenComponent.DestinationPosition.Y = e.SpaceComponent.Position.Y + differenceVector.Y
 
-				fmt.Print("X:")
-				fmt.Print(float32(float32(sin) * e.MoveTweenComponent.Range))
-				fmt.Println()
-				fmt.Print("Y:")
-				fmt.Print(float32(float32(cos) * e.MoveTweenComponent.Range))
-				fmt.Println()
+				// fmt.Print("X:")
+				// fmt.Print(float32(float32(sin) * e.MoveTweenComponent.Range))
+				// fmt.Println()
+				// fmt.Print("Y:")
+				// fmt.Print(float32(float32(cos) * e.MoveTweenComponent.Range))
+				// fmt.Println()
 			}
 
 		}
