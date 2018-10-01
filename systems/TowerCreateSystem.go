@@ -67,13 +67,13 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 
 		tower.MoveTweenComponent = components.MoveTweenComponent{
 			StartPosition: tower.SpaceComponent.Position,
-			Speed:         300, //Travels 50 units per second.
+			Speed:         400, //Travels 400 units per second.
 			Range:         150, //units of distance
 			Done:          true,
 		}
 
 		tower.MoveCooldownComponent = components.MoveCooldownComponent{
-			Recharge: 80, // Recharges 100 unit per second
+			Recharge: 200, // Recharges 200 unit per second
 			Cooldown: 100,
 			Done:     false,
 		}
