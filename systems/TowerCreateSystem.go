@@ -3,6 +3,7 @@ package systems
 import (
 	"fmt"
 	"image/color"
+	"math/rand"
 	"towers/components"
 	"towers/entities"
 
@@ -90,6 +91,10 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			Loaded:   false,
 		}
 
+		tower.TeamComponent = components.TeamComponent{
+			Name: GetRandomTeamName(),
+		}
+
 		for _, system := range tb.world.Systems() {
 			switch sys := system.(type) {
 			case *common.RenderSystem:
@@ -107,4 +112,22 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 		}
 
 	}
+
+}
+
+//GetRandomTeamName stuff
+func GetRandomTeamName() components.TeamName {
+	var team components.TeamName
+	var num int
+	num = rand.Intn(3)
+
+	switch num {
+	case 0:
+		team = components.Sprite
+	case 1:
+		team = components.Monster
+	case 2:
+		team = components.Rock
+	}
+	return team
 }
