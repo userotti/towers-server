@@ -95,6 +95,8 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			Name: GetRandomTeamName(),
 		}
 
+		fmt.Println(GetRandomTeamName())
+
 		for _, system := range tb.world.Systems() {
 			switch sys := system.(type) {
 			case *common.RenderSystem:
@@ -117,17 +119,15 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 
 //GetRandomTeamName stuff
 func GetRandomTeamName() components.TeamName {
-	var team components.TeamName
-	var num int
-	num = rand.Intn(3)
-
-	switch num {
+	switch rand.Intn(3) {
 	case 0:
-		team = components.Sprite
+		return components.Sprite
 	case 1:
-		team = components.Monster
+		return components.Monster
 	case 2:
-		team = components.Rock
+		return components.Rock
 	}
-	return team
+
+	return components.Rock
+
 }
