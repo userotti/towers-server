@@ -82,19 +82,13 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			Type: "RandomMover",
 		}
 
-		// tower.TestTweenComponent = components.TestTweenComponent{
-		// 	MinCharge:     0,
-		// 	MaxCharge:     2,
-		// 	CurrentCharge: 0,
-		// 	RechargeSpeed: 0.2,
-		// 	Charged:       false,
-		// }
-
-		//
-		// fmt.Println(tower.TweenComponent.StartTime.String())
-		// fmt.Println(tower.TweenComponent.EndTime.String())
-		// fmt.Println(time.Duration(2 * time.Second).Nanoseconds())
-		// fmt.Println(tower.TweenComponent.EndTime.Sub(tower.TweenComponent.StartTime).Nanoseconds())
+		tower.WeaponComponent = components.WeaponComponent{
+			Recharge: 100, // Recharges 100 unit per second
+			Cooldown: 100,
+			Damage:   1,
+			Range:    100,
+			Loaded:   false,
+		}
 
 		for _, system := range tb.world.Systems() {
 			switch sys := system.(type) {
@@ -106,6 +100,8 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 				sys.Add(&tower.BasicEntity, &tower.MoveCooldownComponent)
 			case *MoveAISystem:
 				sys.Add(&tower.BasicEntity, &tower.MoveAIComponent, &tower.MoveCooldownComponent, &tower.MoveTweenComponent, &tower.SpaceComponent)
+			case *WeaponRechargeSystem:
+				sys.Add(&tower.BasicEntity, &tower.WeaponComponent)
 			}
 
 		}

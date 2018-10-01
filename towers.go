@@ -28,6 +28,7 @@ func (*myScene) Setup(u engo.Updater) {
 	world.AddSystem(&systems.MoveTweenSystem{})
 	world.AddSystem(&systems.MoveCooldownSystem{})
 	world.AddSystem(&systems.MoveAISystem{})
+	world.AddSystem(&systems.WeaponRechargeSystem{})
 
 	// world.AddSystem(&systems.TestTweenSystem{})
 

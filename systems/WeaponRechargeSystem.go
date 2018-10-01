@@ -1,20 +1,23 @@
 package systems
 
 import (
+	"math"
+	"time"
 	"towers/components"
+	"towers/utility"
 
 	"engo.io/ecs"
 )
 
-//WeaponEnity system entity
-type WeaponEnity struct {
+//WeaponRechargeEntity system entity
+type WeaponRechargeEntity struct {
 	*ecs.BasicEntity
 	*components.WeaponComponent
 }
 
 //WeaponRechargeSystem mange move cooldown
 type WeaponRechargeSystem struct {
-	entities []WeaponEnity
+	entities []WeaponRechargeEntity
 }
 
 //New whne the system is created
@@ -24,7 +27,7 @@ func (wrs *WeaponRechargeSystem) New(w *ecs.World) {
 
 //Add new entity to the system
 func (wrs *WeaponRechargeSystem) Add(basic *ecs.BasicEntity, move *components.WeaponComponent) {
-	wrs.entities = append(wrs.entities, WeaponEnity{basic, move})
+	wrs.entities = append(wrs.entities, WeaponRechargeEntity{basic, move})
 }
 
 //Remove removes them from the system
@@ -46,11 +49,22 @@ func (wrs *WeaponRechargeSystem) Update(dt float32) {
 
 	for _, e := range wrs.entities {
 		if !e.WeaponComponent.Loaded {
-			e.WeaponComponent.CurrentCharge = e.WeaponComponent.CurrentCharge + e.WeaponComponent.RechargeSpeed
-			if e.WeaponComponent.CurrentCharge >= e.WeaponComponent.MaxCharge {
-				e.WeaponComponent.CurrentCharge = e.WeaponComponent.MaxCharge
+
+			//Calculate the tween values
+			e.WeaponComponent.NanosecondsTotalDuration = int64((math.Pow(10, 9) * e.WeaponComponent.Cooldown) / e.WeaponComponent.Recharge)
+			e.WeaponComponent.NanosecondsFromStart = e.WeaponComponent.NanosecondsFromStart + int64(math.Pow(10, 9)*float64(dt))
+
+			var startTime = e.WeaponComponent.StartTime
+			var endTime = e.WeaponComponent.StartTime.Add(time.Duration(e.WeaponComponent.NanosecondsTotalDuration))
+
+			//Apply the desired tween function
+			tweenFunctionResult := utility.Linear(startTime, endTime, startTime.Add(time.Duration(e.WeaponComponent.NanosecondsFromStart))) //Change NanosecondsFromStart of time.Now for time travel stuff
+
+			//Stop tweening
+			if tweenFunctionResult == 1 {
 				e.WeaponComponent.Loaded = true
 			}
+
 		}
 	}
 
