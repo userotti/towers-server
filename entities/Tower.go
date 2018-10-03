@@ -12,7 +12,7 @@ type Tower struct {
 	ecs.BasicEntity
 	common.RenderComponent
 	common.SpaceComponent
-	components.MoveAIComponent
+	components.AIComponent
 	components.MoveCooldownComponent
 	components.MoveTweenComponent
 	components.TeamComponent

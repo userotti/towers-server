@@ -14,7 +14,7 @@ import (
 //MoveAIEntity system entity
 type MoveAIEntity struct {
 	*ecs.BasicEntity
-	*components.MoveAIComponent
+	*components.AIComponent
 	*components.MoveCooldownComponent
 	*components.MoveTweenComponent
 	*common.SpaceComponent
@@ -31,7 +31,7 @@ func (mas *MoveAISystem) New(w *ecs.World) {
 }
 
 //Add new entity to the system
-func (mas *MoveAISystem) Add(basic *ecs.BasicEntity, moveAi *components.MoveAIComponent, moveCooldown *components.MoveCooldownComponent, moveTween *components.MoveTweenComponent, space *common.SpaceComponent) {
+func (mas *MoveAISystem) Add(basic *ecs.BasicEntity, moveAi *components.AIComponent, moveCooldown *components.MoveCooldownComponent, moveTween *components.MoveTweenComponent, space *common.SpaceComponent) {
 	mas.entities = append(mas.entities, MoveAIEntity{basic, moveAi, moveCooldown, moveTween, space})
 }
 
@@ -65,7 +65,7 @@ func (mas *MoveAISystem) Update(dt float32) {
 			e.MoveTweenComponent.NanosecondsFromStart = 0
 
 			//But where are you tweening to? ...
-			if e.MoveAIComponent.Type == "RandomMover" {
+			if e.AIComponent.Type == components.Crazy {
 				sin, cos := math.Sincos((rand.Float64() * (2 * math.Pi)) - math.Pi)
 
 				var differenceVector = engo.Point{X: float32(sin * e.MoveTweenComponent.Range), Y: float32(cos * e.MoveTweenComponent.Range)}

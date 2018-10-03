@@ -68,19 +68,19 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 
 		tower.MoveTweenComponent = components.MoveTweenComponent{
 			StartPosition: tower.SpaceComponent.Position,
-			Speed:         400, //Travels 400 units per second.
-			Range:         150, //units of distance
+			Speed:         150, //Travels 40 units per second.
+			Range:         50,  //units of distance
 			Done:          true,
 		}
 
 		tower.MoveCooldownComponent = components.MoveCooldownComponent{
-			Recharge: 200, // Recharges 200 unit per second
-			Cooldown: 100,
+			Recharge: 80, // Recharges 50 unit per second
+			Cooldown: 20,
 			Done:     false,
 		}
 
-		tower.MoveAIComponent = components.MoveAIComponent{
-			Type: "RandomMover",
+		tower.AIComponent = components.AIComponent{
+			Type: components.Crazy,
 		}
 
 		tower.WeaponComponent = components.WeaponComponent{
@@ -106,7 +106,7 @@ func (tb *TowerCreateSystem) Update(dt float32) {
 			case *MoveCooldownSystem:
 				sys.Add(&tower.BasicEntity, &tower.MoveCooldownComponent)
 			case *MoveAISystem:
-				sys.Add(&tower.BasicEntity, &tower.MoveAIComponent, &tower.MoveCooldownComponent, &tower.MoveTweenComponent, &tower.SpaceComponent)
+				sys.Add(&tower.BasicEntity, &tower.AIComponent, &tower.MoveCooldownComponent, &tower.MoveTweenComponent, &tower.SpaceComponent)
 			case *WeaponRechargeSystem:
 				sys.Add(&tower.BasicEntity, &tower.WeaponComponent)
 			}
