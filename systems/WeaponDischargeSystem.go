@@ -49,13 +49,14 @@ func (wds *WeaponAISystem) Remove(basic ecs.BasicEntity) {
 //Update updates all entities
 func (wds *WeaponAISystem) Update(dt float32) {
 
+	var targets []WeaponAIEntity
+
 	for _, shooter := range wds.entities {
 
 		if shooter.AIComponent.Type == components.Crazy {
-			// var targets []WeaponAIEntity
 			for _, other := range wds.entities {
-				if other.TeamComponent.Name != shooter.TeamComponent.Name && shooter.WeaponComponent.Loaded {
-					// append(targets, other)
+				if shooter.WeaponComponent.Loaded {
+					targets = append(targets, other)
 				}
 			}
 		}
