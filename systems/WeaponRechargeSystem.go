@@ -3,8 +3,8 @@ package systems
 import (
 	"math"
 	"time"
-	"towers/components"
-	"towers/utility"
+	"towers-server/components"
+	"towers-server/utility"
 
 	"engo.io/ecs"
 )

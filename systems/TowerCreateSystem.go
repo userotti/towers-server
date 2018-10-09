@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"image/color"
 	"math/rand"
-	"towers/components"
-	"towers/entities"
+	"towers-server/components"
+	"towers-server/entities"
 
 	"engo.io/ecs"
 	"engo.io/engo"

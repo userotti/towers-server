@@ -2,7 +2,7 @@ package systems
 
 import (
 	"fmt"
-	"towers/components"
+	"towers-server/components"
 
 	"engo.io/ecs"
 )

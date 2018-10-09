@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"towers/components"
+	"towers-server/components"
 
 	"engo.io/ecs"
 	"engo.io/engo/common"

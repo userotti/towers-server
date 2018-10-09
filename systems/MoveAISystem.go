@@ -4,7 +4,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
-	"towers/components"
+	"towers-server/components"
 
 	"engo.io/ecs"
 	"engo.io/engo"

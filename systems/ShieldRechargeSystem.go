@@ -1,7 +1,7 @@
 package systems
 
 import (
-	"towers/components"
+	"towers-server/components"
 
 	"engo.io/ecs"
 )
